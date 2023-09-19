@@ -165,7 +165,7 @@ int
 g_luks_kdf_init(struct g_luks_kdf_ctx *ctx, g_luks_kdf type,
 		const uint8_t *iv, size_t iv_len)
 {
-	explicit_bzero(ctx, sizeof(g_luks_kdf_ctx));
+	explicit_bzero(ctx, sizeof(struct g_luks_kdf_ctx));
 	switch(type) {
 		case G_LUKS_KDF_PBKDF2:
 			break;
@@ -239,7 +239,7 @@ g_luks_pbkdf2(const uint8_t *passphrase, size_t pass_len,
 
 int
 g_luks_kdf_do(struct g_luks_kdf_ctx *ctx,
-		const char* passphrase, size_t pass_len,
+		const uint8_t* passphrase, size_t pass_len,
 		uint8_t *buf, size_t buf_len)
 {
 	switch(ctx->type) {

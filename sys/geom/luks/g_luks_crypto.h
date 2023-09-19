@@ -33,6 +33,7 @@
 #include <sys/time.h>
 #include <sys/errno.h>
 #include <sys/libkern.h>
+#include <sys/malloc.h>
 #include <opencrypto/cryptodev.h>
 #include <opencrypto/rmd160.h>
 #include <crypto/sha1.h>
@@ -105,13 +106,10 @@ typedef enum {
 
 #define G_LUKS_KDF_IV_MAX	64
 
-typedef int (*g_luks_kdf_t)(struct g_luks_kdf_ctx *ctx,
-				const uint8_t* passphrase, size_t pass_len,
-				uint8_t *buf, size_t buf_len);
-
 struct g_luks_kdf_ctx {
 	g_luks_kdf	type;
 	uint8_t		iv[G_LUKS_KDF_IV_MAX];
+	size_t		iv_len;
 	union {
 		struct {
 			g_luks_hash	hash;
@@ -124,6 +122,10 @@ struct g_luks_kdf_ctx {
 		} argon2i;
 	} def;
 };
+
+typedef int (*g_luks_kdf_t)(struct g_luks_kdf_ctx *ctx,
+				const uint8_t* passphrase, size_t pass_len,
+				uint8_t *buf, size_t buf_len);
 
 int
 g_luks_kdf_init(struct g_luks_kdf_ctx *ctx, g_luks_kdf type,

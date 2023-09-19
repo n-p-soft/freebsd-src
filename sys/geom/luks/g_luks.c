@@ -152,14 +152,10 @@ g_luks_get_unmapped(struct bio *bp, uint8_t **buf)
 static void
 g_luks_done(struct bio *bp)
 {
-	struct g_luks_softc *sc;
-
 	G_LUKS_DEBUG(8, "done flags=%x off=%li",
 			bp->bio_flags, bp->bio_offset);
-	if (bp->bio_pflags & G_LUKS_STATE_ALLOCATED) {
-		sc = bp->bio_to->geom->softc;
+	if (bp->bio_pflags & G_LUKS_STATE_ALLOCATED)
 		g_luks_mfree((uint8_t**)&bp->bio_data, bp->bio_length);
-	}
 	if (bp->bio_error == 0) {
 		if (bp->bio_cmd == BIO_GETATTR) {
 			if (strcmp("GEOM::physpath", bp->bio_attribute) == 0)
@@ -1057,7 +1053,8 @@ g_luks_format_v1(struct g_class *mp, struct g_provider *pp,
 				phdr + G_LUKS_SALT_OFFSET, G_LUKS_SALT_LEN);
 		k.def.pbkdf2.iterations = iter;
 		k.def.pbkdf2.hash = hash;
-		error = g_luks_kdf_do(mk, mk_len, phdr + G_LUKS_DIGEST_OFFSET,
+		error = g_luks_kdf_do(&k, mk, mk_len,
+					phdr + G_LUKS_DIGEST_OFFSET,
 					G_LUKS_DIGEST_LEN);
 	}
 

@@ -34,7 +34,7 @@ typedef uint8_t	BYTE;
 int rijndael_makeKey(keyInstance *key, BYTE direction, int keyLen,
 	const char *keyMaterial) {
 
-	if (key == NULL) {
+	if (key == NULL || keyMaterial == NULL) {
 		return BAD_KEY_INSTANCE;
 	}
 
@@ -50,17 +50,13 @@ int rijndael_makeKey(keyInstance *key, BYTE direction, int keyLen,
 		return BAD_KEY_MAT;
 	}
 
-	if (keyMaterial != NULL) {
-		memcpy(key->keyMaterial, keyMaterial, keyLen/8);
-	}
-
 	/* initialize key schedule: */
 	if (direction == DIR_ENCRYPT) {
-		key->Nr = rijndaelKeySetupEnc(key->rk, key->keyMaterial, keyLen);
+		key->Nr = rijndaelKeySetupEnc(key->rk, keyMaterial, keyLen);
 	} else {
-		key->Nr = rijndaelKeySetupDec(key->rk, key->keyMaterial, keyLen);
+		key->Nr = rijndaelKeySetupDec(key->rk, keyMaterial, keyLen);
 	}
-	rijndaelKeySetupEnc(key->ek, key->keyMaterial, keyLen);
+	rijndaelKeySetupEnc(key->ek, keyMaterial, keyLen);
 	return TRUE;
 }
 

@@ -41,7 +41,6 @@
 typedef struct {
     uint8_t  direction;            /* Key used for encrypting or decrypting? */
     int   keyLen;                   /* Length of the key  */
-    char  keyMaterial[RIJNDAEL_MAX_KEY_SIZE+1];  /* Raw key data in ASCII, e.g., user input or KAT values */
 	int   Nr;                       /* key-length-dependent number of rounds */
 	uint32_t   rk[4*(RIJNDAEL_MAXNR + 1)];        /* key schedule */
 	uint32_t   ek[4*(RIJNDAEL_MAXNR + 1)];        /* CFB1 key schedule (encryption only) */
